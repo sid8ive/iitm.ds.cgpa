@@ -1,3 +1,105 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const coursesContainer = document.getElementById("courses-container");
+  const calculateBtn = document.getElementById("calculate-btn");
+  const gpaDisplay = document.getElementById("gpa-display");
+
+  // Populate the dropdown with courses from all categories
+  const addCourseRow = () => {
+    const row = document.createElement("div");
+    row.className = "course-row";
+
+    // Dropdown for course selection
+    const courseSelect = document.createElement("select");
+    courseSelect.className = "course-select";
+    courseSelect.innerHTML = `
+      <option value="" disabled selected>Select a course</option>
+      ${Object.keys(credits).map(category => `
+        <optgroup label="${category}">
+          ${credits[category].map(course => `
+            <option value="${course.Credits}">${course.Course}</option>
+          `).join("")}
+        </optgroup>
+      `).join("")}
+    `;
+    row.appendChild(courseSelect);
+
+    // Grade input
+    const gradeInput = document.createElement("input");
+    gradeInput.type = "text";
+    gradeInput.className = "grade-input";
+    gradeInput.placeholder = "Enter Grade (e.g., A, B+)";
+    row.appendChild(gradeInput);
+
+    coursesContainer.appendChild(row);
+  };
+
+  // Add initial row
+  addCourseRow();
+
+  // Calculate GPA
+  calculateBtn.addEventListener("click", () => {
+    const rows = document.querySelectorAll(".course-row");
+    let totalCredits = 0;
+    let totalWeightedPoints = 0;
+
+    rows.forEach(row => {
+      const courseSelect = row.querySelector(".course-select");
+      const gradeInput = row.querySelector(".grade-input");
+      const gradeValue = gradeInput.value.toUpperCase();
+      const credits = parseFloat(courseSelect.value);
+      const gradePoints = getGradePoints(gradeValue);
+
+      if (!credits || !gradePoints) {
+        alert("Please ensure all fields are filled correctly.");
+        return;
+      }
+
+      totalCredits += credits;
+      totalWeightedPoints += credits * gradePoints;
+    });
+
+    const gpa = (totalWeightedPoints / totalCredits).toFixed(2);
+    gpaDisplay.textContent = `Your GPA is: ${gpa}`;
+  });
+
+  // Map grade to grade points
+  const getGradePoints = (grade) => {
+    const gradeMapping = {
+      S: 10,
+      A: 9,
+      B: 8,
+      C: 7,
+      D: 6,
+      E: 5,
+      F: 0,
+    };
+    return gradeMapping[grade] || null;
+  };
+
+  // Add more course rows dynamically
+  document.getElementById("add-course-btn").addEventListener("click", addCourseRow);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</*
 document.getElementById("submitButton").addEventListener("click", function() {
     document.getElementById("output").innerHTML && (document.getElementById("output").innerHTML = "");
     let e = document.getElementById("dynamicForm");
@@ -201,3 +303,4 @@ function getGpa(t, o, e) {
 function roundToTwo(e) {
     return +(Math.round(e + "e+2") + "e-2")
 }
+*/
